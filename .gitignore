@@ -7,3 +7,7 @@ gc/ogc/libversion.h
 *.bz2
 docs
 warn.log
+.xmake
+.cache
+build
+compile_commands.json

@@ -1,0 +1,15 @@
+#ifndef __OGC_LIBVERSION_H__
+#define __OGC_LIBVERSION_H__
+
+#define _V_MAJOR_ ${VERSION_MAJOR}
+#define _V_MINOR_ ${VERSION_MINOR}
+#define _V_PATCH_ ${VERSION_ALTER}
+
+#define _V_DATE_ "${DATE}"
+#define _V_TIME_ "${TIME}"
+
+#define _V_STRING "libogc-orca ${VERSTRING}"
+
+#define _LIBOGC2_REVISION_ ${REVISION}
+
+#endif // __OGC_LIBVERSION_H__
