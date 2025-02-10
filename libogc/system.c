@@ -451,7 +451,6 @@ static void __lowmem_init(void)
 {
 #if defined(HW_DOL)
 	void *ram_start = (void*)0x80000000;
-	void *ram_end = (void*)(0x80000000|SYSMEM1_SIZE);
 	void *arena_start = (void*)0x80003000;
 #endif
 
@@ -460,6 +459,7 @@ static void __lowmem_init(void)
 	if (__myArena1Hi == 0) __myArena1Hi = __Arena1Hi;
 
 #if defined(HW_DOL)
+#if !defined(NOREINIT_LOWMEM)
 	memset(ram_start,0,0x100);
 	memset(arena_start,0,0x100);
 
@@ -467,25 +467,24 @@ static void __lowmem_init(void)
 	*((u32*)(ram_start+0x24))	= 1;            // version
 	*((u32*)(ram_start+0x28))	= SYSMEM1_SIZE;	// physical memory size
 	*((u32*)(ram_start+0x2C))	= 1 + ((*(u32*)0xCC00302c)>>28);
-
-	*((u32*)(ram_start+0x30))	= (u32)__myArena1Lo;
 	*((u32*)(ram_start+0x34))	= (u32)__myArena1Hi;
 
-	*((u32*)(ram_start+0xEC))	= (u32)ram_end;	// ram_end (??)
+	*((u32*)(ram_start+0xEC))	= (u32)(0x80000000|SYSMEM1_SIZE);	// ram_end (??)
 	*((u32*)(ram_start+0xF0))	= SYSMEM1_SIZE;	// simulated memory size
 	*((u32*)(ram_start+0xF8))	= TB_BUS_CLOCK;	// bus speed: 162 MHz
 	*((u32*)(ram_start+0xFC))	= TB_CORE_CLOCK;	// cpu speed: 486 Mhz
 
-	*((u16*)(arena_start+0xE0))	= 6; // production pads
 	*((u32*)(arena_start+0xE4))	= 0xC0008000;
+#endif
+	if (*((u32*)(ram_start+0x30)) == 0) *((u32*)(ram_start+0x30)) = (u32)__myArena1Lo;
+	*((u16*)(arena_start+0xE0))	= 6; // production pads
 
 	DCFlushRangeNoSync(ram_start, 0x100);
 	DCFlushRangeNoSync(arena_start, 0x100);
 	_sync();
 #endif
-
 	SYS_SetArenaLo((void*)__myArena1Lo);
-	SYS_SetArenaHi((void*)__myArena1Hi);
+	SYS_SetArenaHi(*((void**)(0x80000034)));
 #if defined(HW_RVL)
 	SYS_SetArena2Lo((void*)__Arena2Lo);
 	SYS_SetArena2Hi((void*)__Arena2Hi);

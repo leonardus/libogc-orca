@@ -19,10 +19,16 @@ toolchain("devkitppc")
 	set_toolset("as", "powerpc-eabi-gcc")
 toolchain_end()
 
+option("noreinit-lowmem")
+	set_default(true)
+	add_defines("NOREINIT_LOWMEM")
+option_end()
+
 local libraries = {
 	ogc = {
 		sources = {"libogc/*.c", "libogc/*.S"},
-		platforms = {"cube", "wii"}
+		platforms = {"cube", "wii"},
+		options = {"noreinit-lowmem"}
 	},
 	iso9660 = {
 		sources = {"libiso9660/iso9660.c"},
@@ -67,6 +73,10 @@ for basename, lib in pairs(libraries) do
 			set_arch("ppc")
 			set_plat(({cube="dolphin", wii="revolution"})[plat])
 			add_deps("headers")
+
+			if lib.options then
+				add_options(table.unpack(lib.options))
+			end
 
 			set_prefixname("lib")
 			set_basename(basename)
