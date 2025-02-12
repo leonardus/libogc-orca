@@ -19,16 +19,10 @@ toolchain("devkitppc")
 	set_toolset("as", "powerpc-eabi-gcc")
 toolchain_end()
 
-option("noreinit-lowmem")
-	set_default(true)
-	add_defines("NOREINIT_LOWMEM")
-option_end()
-
 local libraries = {
 	ogc = {
 		sources = {"libogc/*.c", "libogc/*.S"},
-		platforms = {"cube", "wii"},
-		options = {"noreinit-lowmem"}
+		platforms = {"cube", "wii"}
 	},
 	iso9660 = {
 		sources = {"libiso9660/iso9660.c"},
